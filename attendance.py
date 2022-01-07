@@ -34,11 +34,10 @@ for cu in myList:
     #appending them into images list
     images.append(current_img)
 
-    #Names extracting now
-    #from os.path we get image full name i.e, shreya.jpg(cu) 
-    #in which splittext makes it to be shreya-->0 and jpg-->1
-    #we need name so taking [0] index
     personName.append(os.path.splitext(cu)[0])
+
+
+
 #print(personName) checking list whether names appended correctly
 
 
@@ -61,7 +60,6 @@ def markAttendance(name):
         for line in myDataList:
             entry = line.split(',')
             nameList.append(entry[0])
-        
         #if name doesn't exists in list we add attendance now
         if name not in nameList:
             time_now = datetime.now()
@@ -72,25 +70,27 @@ def markAttendance(name):
 
 #**********************
 #camera reading
-#for laptop give id-->0
-#for external camera use id-->1
+
+#for laptop give id--> 0
+#for external camera use id--> 1
 cap = cv2.VideoCapture(0) 
 
 while True:
+
     ret,frame = cap.read()
     faces = cv2.resize(frame, (0,0),None,0.25,0.25) #resizing the frame from camera input
     faces = cv2.cvtColor(faces,cv2.COLOR_BGR2RGB)  #converting bgr faces from camera to rgb , since using cv2 we are taking
-
+    
+    
     #face location finding
     facesCurrentFrame = face_recognition.face_locations(faces) #storing all faces
     encodesCurrentFrame = face_recognition.face_encodings(faces,facesCurrentFrame) #face encoding both faces and faces on frames
-
     #face comparisions and face distances finding
+
+
     for encodeFace,faceLoc in zip(encodesCurrentFrame,facesCurrentFrame):
         matches = face_recognition.compare_faces(encodeListKnown,encodeFace)   # already encoded faces and current encoded faces sending
         faceDis = face_recognition.face_distance(encodeListKnown,encodeFace)
-
-
         matchIndex = np.argmin(faceDis) # minimum distance index values is extracted
         y1,x2,y2,x1 = faceLoc
         y1,x2,y2,x1 = y1*4,x2*4,y2*4,x1*4
@@ -104,10 +104,12 @@ while True:
         else:
             cv2.rectangle(frame,(x1, y2),(x2,y2),(0,255,0),cv2.FILLED)
             cv2.putText(frame,"UN_KNOWN",(x1+6,y2-6),cv2.FONT_HERSHEY_COMPLEX_SMALL,0.6,(0,0,255),1)
-
     cv2.imshow("Camera",frame)
     if cv2.waitKey(10) == 13:
         break
+
+
+
 cap.release()
 cv2.destroyAllWindows()
 
